@@ -31,6 +31,30 @@ app.get("/blogs", function(req, res){
         }
     });
 });
+// New route
+app.get("/blogs/new", function(req, res) {
+    res.render("new");
+})
+// Create route
+app.post("/blogs", function(req, res){
+    Blog.create(req.body.blog, function(err, newBlog){
+        if (err) {
+            res.render("new");
+        } else {
+            res.redirect("/blogs");
+        }
+    });
+});
+// Show route
+app.get("/blogs/:id", function(req, res) {
+   Blog.findById(req.params.id, function(err, foundBlog){
+       if (err) {
+           res.redirect("/blogs");
+        } else {
+            res.render("show", {blog: foundBlog});
+        } 
+   }); 
+});
 
 app.listen(process.env.PORT, process.env.IP, function() {
    console.log("Server is running!") 
