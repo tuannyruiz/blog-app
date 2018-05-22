@@ -1,13 +1,15 @@
-var bodyParser = require("body-parser"),
-    express = require("express"),
-    app = express(),
-    mongoose = require("mongoose");
+var bodyParser      = require("body-parser"),
+    methodOverride  = require("method-override")
+    express         = require("express"),
+    app             = express(),
+    mongoose        = require("mongoose");
 
 mongoose.connect("mongodb://localhost/restful_blog_app");
 
 app.set("view engine", "ejs");
 app.use(express.static("public")); //servir o aplicativo com uma folha de estilos customizada
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride("_method"));
 
 var blogSchema = new mongoose.Schema({
     title: String,
@@ -63,6 +65,16 @@ app.get("/blogs/:id/edit", function(req, res) {
             res.redirect("/blogs");
         } else {
             res.render("edit", {blog: foundBlog});
+        }
+    });
+});
+//Update route
+app.put("/blogs/:id", function(req, res){
+    Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(err, updatedBlog){
+        if (err) {
+            res.redirect("/blogs")
+        } else {
+            res.redirect("/blogs/" + req.params.id);
         }
     });
 });
